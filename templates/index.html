@@ -3,12 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Vulnerability Scanner</title>
+    <title>Simple</title>
 </head>
 <body>
-    <h1>Web Vulnerability Scanner</h1>
+    <h1>SimpleScan</h1>
     <input type="text" id="targetUrl" placeholder="Enter target URL">
     <button onclick="startSpider()">Start Spider Scan</button>
     <pre id="output"></pre>
 
+     <!--SCRIPT for when sending requests to the backend zap api -->
+    <script>
+        function startScan(apiEndpoint){
+            //gets the target url from the input field
+            var targetUrl = document.getElementById('targetUrl').value;
+            //sends the target url to the backend which then sends it to zap api with the required content header and method type 
+            fetch(apiEndpoint, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body:JSON.stringify({ url:targetUrl})
+            })
+            
+            
+
+            function startSpider(){
+                startScan('/start_spider');
+            }
+
+        }
+
+    </script>
+
 </body>
+</html>

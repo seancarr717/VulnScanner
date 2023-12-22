@@ -18,6 +18,16 @@ def start_spider():
     return start_zap_scan(request, 'spider')
 
 
+#start zap spider scan which gets all the info from the html whihc is sent over 
+def start_zap_scan(request, scan_type):
+    data = request.get_json()
+    target_url = data.get('url')
+    
+    #specifies zap endpoint to send to with supplied api key and url
+    if scan_type == 'spider':
+        zap_endpoint = f"{ZAP_API_URL}/JSON/spider/action/scan/?apikey={ZAP_API_KEY}&url={target_url}"
+
+
 
 #runs the app when flask app is ran with debug on
 if __name__ == '__main__':
