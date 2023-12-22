@@ -8,7 +8,9 @@
 <body>
     <h1>SimpleScan</h1>
     <input type="text" id="targetUrl" placeholder="Enter target URL">
+    <!--button to start scans  functions -->
     <button onclick="startSpider()">Start Spider Scan</button>
+    <button onclick="startActiveScan()">Start Active Scan</button>
     <pre id="output"></pre>
 
      <!--SCRIPT for when sending requests to the backend zap api -->
@@ -16,7 +18,7 @@
         function startScan(apiEndpoint){
             //gets the target url from the input field
             var targetUrl = document.getElementById('targetUrl').value;
-            //sends the target url to the backend which then sends it to zap api with the required content header and method type 
+            //sends the target url to the backend which then sends it to zap api with the required content header and method type in json
             fetch(apiEndpoint, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -25,13 +27,19 @@
 
             //gets response from backend
             .then(response => response.json())
-            //gets output from backend
+            //gets output from backend and converts from json to string
             .then(data => document.getElementById('output').textContent = JSON.stringify(data, null, 2))
+            //catches errors in console
             .catch(error => console.error('Error:', error));
            
         }
+        //starts spider function when the button is clicked in our backend
         function startSpider(){
                 startScan('/start_spider');
+        }
+        //starts active sscan in the backend when button clicked
+        function startActiveScan() {
+                startScan('/start_active_scan');
         }
 
         
