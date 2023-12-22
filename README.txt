@@ -3,3 +3,7 @@ make sure requests and flask dependencies are installed
 
 pip install requests
 pip install Flask
+
+api key ,accessible at tools>options>api
+
+then generate a key and add to app.py file
