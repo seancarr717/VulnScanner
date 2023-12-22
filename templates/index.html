@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple</title>
+    <title>SimpleScan</title>
 </head>
 <body>
     <h1>SimpleScan</h1>
     <input type="text" id="targetUrl" placeholder="Enter target URL">
     <button onclick="startSpider()">Start Spider Scan</button>
+    <button onclick="startActiveScan()">Start Active Scan</button>
     <pre id="output"></pre>
 
      <!--SCRIPT for when sending requests to the backend zap api -->
@@ -22,16 +23,22 @@
                 headers: {'Content-Type': 'application/json'},
                 body:JSON.stringify({ url:targetUrl})
             })
-            
+
+            //gets response from backend
+            .then(response => response.json())
+            //gets output from backend
+            .then(data => document.getElementById('output').textContent = JSON.stringify(data, null, 2))
+            .catch(error => console.error('Error:', error));
             
 
-            function startSpider(){
+        function startSpider(){
                 startScan('/start_spider');
-            }
+        }
+  
 
         }
 
     </script>
-
+    
 </body>
 </html>

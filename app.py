@@ -22,11 +22,18 @@ def start_spider():
 def start_zap_scan(request, scan_type):
     data = request.get_json()
     target_url = data.get('url')
+    #gives 400 response if no url given
+    if not target_url:
+        return jsonify({"error": "URL is required"}), 400
     
     #specifies zap endpoint to send to with supplied api key and url
     if scan_type == 'spider':
         zap_endpoint = f"{ZAP_API_URL}/JSON/spider/action/scan/?apikey={ZAP_API_KEY}&url={target_url}"
-
+    
+        
+    response = requests.get(zap_endpoint)
+    scan_id = response.json().get('scan') if response.status_code == 200 else None
+    return jsonify({"message": f"{scan_type.capitalize()} scan started", "scan_id": scan_id})
 
 
 #runs the app when flask app is ran with debug on
