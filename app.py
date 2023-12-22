@@ -5,7 +5,7 @@ import requests
 app = Flask(__name__)
 #set where zap is hosted and your api key ,accessible at tools>options api
 ZAP_API_URL = "http://localhost:9090"
-ZAP_API_KEY = "hmfds6d8j8mqqlc61tqjgvfaqq"
+ZAP_API_KEY = "im496jdnidj3mor1jt24kpgi2k"
 
 #route for rendering the index.html file as the default page
 @app.route('/')
@@ -16,6 +16,8 @@ def home():
 @app.route('/start_spider', methods=['POST'])
 def start_spider():
     return start_zap_scan(request, 'spider')
+
+
 
 
 #start zap spider scan which gets all the info from the html whihc is sent over 
