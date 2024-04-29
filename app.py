@@ -1,5 +1,5 @@
 #imports for requests and flask api stuff
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template,redirect,url_for
 import requests
 
 app = Flask(__name__)
@@ -7,10 +7,21 @@ app = Flask(__name__)
 ZAP_API_URL = "http://localhost:9090"
 ZAP_API_KEY = "im496jdnidj3mor1jt24kpgi2k"
 
+
+
+
 #route for rendering the index.html file as the default page
 @app.route('/')
 def home():
     return render_template('index.html')
+
+#route for  login page
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+    return render_template('login.html')
 
 @app.route('/network')
 def network():
