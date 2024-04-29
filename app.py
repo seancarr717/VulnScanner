@@ -12,6 +12,10 @@ ZAP_API_KEY = "im496jdnidj3mor1jt24kpgi2k"
 def home():
     return render_template('index.html')
 
+@app.route('/network')
+def network():
+    return render_template('network.html')
+
 #route for starting spider  scan in zap api
 @app.route('/start_spider', methods=['POST'])
 def start_spider():
