@@ -1,7 +1,6 @@
 #imports for requests and flask api stuff
 from flask import Flask, request, jsonify, render_template,redirect,url_for,session
-import requests,os
-
+import requests,os,nmap
 app = Flask(__name__)
 #set where zap is hosted and your api key ,accessible at tools>options api
 
@@ -35,10 +34,15 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('login'))
 
-@app.route('/network')
+@app.route('/network', methods=['GET', 'POST'])
 def network():
     if 'username' in session:
-        return render_template('network.html')
+        scan_results = ""
+        if request.method == 'POST':
+            target = request.form['target']
+            scanner = nmap.PortScanner()
+            scan_results = scanner.scan(hosts=target, arguments='-sV')
+        return render_template('network.html', results=scan_results)
     return redirect(url_for('login'))
 
 @app.route('/spider')
@@ -55,6 +59,7 @@ def start_spider():
 @app.route('/start_active_scan', methods=['POST'])
 def start_active_scan():
     return start_zap_scan(request, 'ascan')
+
 
 
 

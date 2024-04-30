@@ -4,6 +4,13 @@
 
 {% block content %}
 <div class="container">
-  <p>Tools to complete nmap scans etc on networks would be here</p>
+  <h1>Network Scanner</h1>
+    <form method="post">
+        <label for="target">Enter IP or Network:</label>
+        <input type="text" id="target" name="target" required>
+        <button type="submit">Scan</button>
+    </form>
+    <h2>Results:</h2>
+    <pre>{{ results }}</pre>  <!-- Display results in preformatted text -->
 </div>
 {% endblock %}
