@@ -27,6 +27,32 @@
           </ul>
         </div>
       </nav>
-<p>Tools to complete nmap scans etc on networks would be here</p>
+    <h1>SimpleScan</h1>
+<button onclick="startSpider()"class="btn btn-primary">Start Spider Scan</button>
+<script>
+
+function startScan(apiEndpoint){
+            //gets the target url from the input field
+            var targetUrl = document.getElementById('targetUrl').value;
+            //sends the target url to the backend which then sends it to zap api with the required content header and method type in json
+            fetch(apiEndpoint, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body:JSON.stringify({ url:targetUrl})
+            })
+
+            //gets response from backend
+            .then(response => response.json())
+            //gets output from backend and converts from json to string
+            .then(data => document.getElementById('output').textContent = JSON.stringify(data, null, 2))
+            //catches errors in console
+            .catch(error => console.error('Error:', error));
+           
+        }
+function startSpider(){
+    startScan('/start_spider');
+}
+</script>
+
 </body>
 </html>

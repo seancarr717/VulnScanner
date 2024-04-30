@@ -1,9 +1,11 @@
 #imports for requests and flask api stuff
-from flask import Flask, request, jsonify, render_template,redirect,url_for
-import requests
+from flask import Flask, request, jsonify, render_template,redirect,url_for,session
+import requests,os
 
 app = Flask(__name__)
 #set where zap is hosted and your api key ,accessible at tools>options api
+
+app.secret_key=os.urandom(24)
 ZAP_API_URL = "http://localhost:9090"
 ZAP_API_KEY = "im496jdnidj3mor1jt24kpgi2k"
 
@@ -13,7 +15,9 @@ ZAP_API_KEY = "im496jdnidj3mor1jt24kpgi2k"
 #route for rendering the index.html file as the default page
 @app.route('/')
 def home():
-    return render_template('index.html')
+    if 'username' in session:
+        return render_template('index.html', username=session['username'])
+    return redirect(url_for('login'))
 
 #route for  login page
 @app.route('/login', methods=['GET', 'POST'])
@@ -21,11 +25,27 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        
+        session['username'] = username
+        return redirect(url_for('home'))
     return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('login'))
 
 @app.route('/network')
 def network():
-    return render_template('network.html')
+    if 'username' in session:
+        return render_template('network.html')
+    return redirect(url_for('login'))
+
+@app.route('/spider')
+def spider():
+    if 'username' in session:
+        return render_template('spider.html')
+    return redirect(url_for('login'))
 
 #route for starting spider  scan in zap api
 @app.route('/start_spider', methods=['POST'])
