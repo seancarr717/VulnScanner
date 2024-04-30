@@ -1,6 +1,8 @@
 #imports for requests and flask api stuff
 from flask import Flask, request, jsonify, render_template,redirect,url_for,session
 import requests,os,nmap
+import subprocess
+import xml.etree.ElementTree as ET
 app = Flask(__name__)
 #set where zap is hosted and your api key ,accessible at tools>options api
 
@@ -37,13 +39,39 @@ def logout():
 @app.route('/network', methods=['GET', 'POST'])
 def network():
     if 'username' in session:
-        scan_results = ""
+        scan_results = []
         if request.method == 'POST':
-            target = request.form['target']
-            scanner = nmap.PortScanner()
-            scan_results = scanner.scan(hosts=target, arguments='-sV')
-        return render_template('network.html', results=scan_results)
+            # Retrieve data from form
+            ip_address = request.form['ip']
+            ports = request.form['ports']
+            flags = request.form['flags']
+        
+            # Run Nmap
+            command = f"nmap {flags} -p {ports} {ip_address} -oX -"  # -oX - outputs XML to stdout
+            result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, text=True)
+        
+            # Parse XML result
+            scan_results = parse_nmap_xml(result.stdout)
+        
+            # Render results
+        return render_template('network.html', scan_results=scan_results)
+    
     return redirect(url_for('login'))
+
+def parse_nmap_xml(xml_output):
+    root = ET.fromstring(xml_output)
+    scan_data = []
+    for host in root.findall('host'):
+        for address in host.findall('address'):
+            ip = address.get('addr')
+            scan_data.append({'IP': ip, 'Ports': []})
+            for port in host.find('ports').findall('port'):
+                portid = port.get('portid')
+                state = port.find('state').get('state')
+                scan_data[-1]['Ports'].append((portid, state))
+    return scan_data
+
+
 
 @app.route('/spider')
 def spider():

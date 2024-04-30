@@ -3,14 +3,23 @@
 {% block title %}Network Tools{% endblock %}
 
 {% block content %}
-<div class="container">
-  <h1>Network Scanner</h1>
-    <form method="post">
-        <label for="target">Enter IP or Network:</label>
-        <input type="text" id="target" name="target" required>
-        <button type="submit">Scan</button>
-    </form>
-    <h2>Results:</h2>
-    <pre>{{ results }}</pre>  <!-- Display results in preformatted text -->
+
+<div class="container d-flex justify-content-center align-items-center">
+  
+  <form method="post" class="form-custom">
+      IP Address: <input type="text" name="ip" class="form-control" required><br>
+      Ports: <input type="text" name="ports" class="form-control" placeholder="80,443"><br>
+      Flags: <input type="text" name="flags" class="form-control" placeholder="-sV"><br>
+      <input type="submit" value="Scan" class="btn btn-primary">
+  </form>
+  
+  {% for host in scan_results %}
+      <h2>IP: {{ host['IP'] }}</h2>
+      <ul>
+          {% for port, state in host['Ports'] %}
+              <li>Port: {{ port }} - State: {{ state }}</li>
+          {% endfor %}
+      </ul>
+  {% endfor %}
 </div>
 {% endblock %}
