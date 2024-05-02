@@ -12,9 +12,10 @@ def parse_nmap_xml(xml_output):
         for port in host.find('ports').findall('port'):
             portid = port.get('portid')
             state = port.find('state').get('state')
-            service=port.find('service').get('service')
-            version=port.find('service').find('version')
-            scan_data[-1]['Ports'].append((portid, state, service, version))
+            service=port.find('service').get('name')
+            product=port.find('service').get('product')
+            version=port.find('service').get('version')
+            scan_data[-1]['Ports'].append((portid, state, service,product, version))
     return scan_data
 
 def run_nmap():
@@ -22,6 +23,10 @@ def run_nmap():
         ip_address = request.form['ip']
         ports = request.form['ports']
         flags = request.form['flags']
+        if not ports:
+            ports='22,80,443'
+        if not flags:
+            flags='-sV'
         command = f"nmap {flags} -p {ports} {ip_address} -oX -"
         result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, text=True)
         scan_results = parse_nmap_xml(result.stdout)

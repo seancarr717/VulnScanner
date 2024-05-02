@@ -20,10 +20,11 @@
         
             {% for host in scan_results %}
                 <h5>IP: {{ host['IP'] }}</h5>
-                {% for port, state, service, version in host['Ports'] %}
+                {% for port, state, service, product, version in host['Ports'] %}
                     <h5>Port: {{ port }}</h5>
                     <h5>State: {{ state }}</h5>
                     <h5>Service: {{ service }}</h5>
+                    <h5>Product: {{ product }}</h5>
                     <h5>Version: {{ version }}</h5>
                 {% endfor %}
             {% endfor %}
