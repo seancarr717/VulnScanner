@@ -3,23 +3,40 @@
 {% block title %}Network Tools{% endblock %}
 
 {% block content %}
-
 <div class="container d-flex justify-content-center align-items-center">
-  
-  <form method="post" class="form-custom">
-      IP Address: <input type="text" name="ip" class="form-control" required><br>
-      Ports: <input type="text" name="ports" class="form-control" placeholder="80,443"><br>
-      Flags: <input type="text" name="flags" class="form-control" placeholder="-sV"><br>
-      <input type="submit" value="Scan" class="btn btn-primary">
-  </form>
-  
-  {% for host in scan_results %}
-      <h2>IP: {{ host['IP'] }}</h2>
-      <ul>
-          {% for port, state in host['Ports'] %}
-              <li>Port: {{ port }} - State: {{ state }}</li>
-          {% endfor %}
-      </ul>
-  {% endfor %}
+    <form method="post" class="form-custom">
+        IP Address: <input type="text" name="ip" class="form-control" required><br>
+        Ports: <input type="text" name="ports" class="form-control" placeholder="80,443"><br>
+        Flags: <input type="text" name="flags" class="form-control" placeholder="-sV"><br>
+        <input type="submit" value="Scan" class="btn btn-primary">
+    </form>
+</div>
+
+<!-- Result display section -->
+<div class="container mt-3">
+    <h4>Scan Results:</h4>
+    <div class="result-box">
+    {% if scan_results %}
+        
+            {% for host in scan_results %}
+                <h5>IP: {{ host['IP'] }}</h5>
+                <h5>
+                    {% for port, state in host['Ports'] %}
+                        Port: {{ port }} 
+                        
+                    {% endfor %}
+                </h5>
+                <h5>
+                    {% for port, state in host['Ports'] %}
+                        State: {{ state }}
+                    {% endfor %}
+                </h5>
+            {% endfor %}
+        </div>
+    {% else %}
+
+        <p>No results to display.</p>
+    {% endif %}
+</div>
 </div>
 {% endblock %}
