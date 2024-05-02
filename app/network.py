@@ -12,7 +12,9 @@ def parse_nmap_xml(xml_output):
         for port in host.find('ports').findall('port'):
             portid = port.get('portid')
             state = port.find('state').get('state')
-            scan_data[-1]['Ports'].append((portid, state))
+            service=port.find('service').get('service')
+            version=port.find('service').find('version')
+            scan_data[-1]['Ports'].append((portid, state, service, version))
     return scan_data
 
 def run_nmap():
