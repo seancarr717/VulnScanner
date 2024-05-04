@@ -1,7 +1,8 @@
-from flask import render_template, redirect, url_for, session
-from .auth import login, logout
+from flask import render_template, redirect, url_for, session,request
+from .auth import login, logout,register
 from .network import run_nmap
 from .web import start_spider, start_active_scan
+
 
 def configure_routes(app):
     @app.route('/')
@@ -17,6 +18,15 @@ def configure_routes(app):
     @app.route('/logout')
     def logout_route():
         return logout()
+    
+    @app.route('/register', methods=['GET', 'POST'])
+    def register_route():
+        if request.method == 'POST':
+            username = request.form['username']
+            password = request.form['password']
+            return register(username, password)
+        else:
+            return render_template('register.html')
 
     @app.route('/network', methods=['GET', 'POST'])
     def network_route():
