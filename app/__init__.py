@@ -2,7 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import os
-
+db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
@@ -10,7 +10,7 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = 'melong'  
     
-    db = SQLAlchemy()
+    
     db.init_app(app)
     
     migrate = Migrate(app, db)
