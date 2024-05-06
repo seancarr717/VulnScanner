@@ -8,7 +8,7 @@ def create_app():
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///default.db').replace("postgres://", "postgresql://", 1)
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SECRET_KEY'] = 'melong'  
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default_secret_key')
     
     
     db.init_app(app)
