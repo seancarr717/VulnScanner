@@ -10,35 +10,69 @@
     <title>SimpleScan</title>
     <style>
         .form-custom {
-            background-color: #323840; 
+            background-color: #323840;
             padding: 20px;
-            border-radius: 5px; 
+            border-radius: 5px;
         }
+
         .form-custom .form-control {
-            background-color: #464a4e; 
+            background-color: #464a4e;
             color: #fff;
             border: 1px solid #6c757d;
         }
+
         .form-custom .form-control:focus {
             background-color: #464a4e;
             border-color: #adb5bd;
             outline: none;
             color: #fff;
         }
+
         .form-custom .form-label {
             color: #ddd;
         }
+
         .form-custom .btn-primary {
-            background-color: #495057; 
+            background-color: #495057;
             border-color: #495057;
         }
+
         .form-custom .btn-primary:hover {
-            background-color: #5e6770; 
+            background-color: #5e6770;
         }
+
         body {
             background-color: #121212;
             color: #fff;
-            
+
+        }
+
+        flash-messages {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            width: 300px;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            transition: opacity 0.3s linear;
+            color: white;
+            /* White text color */
+        }
+
+        .alert-error {
+            background-color: #f44336;
+            /* Red background for errors */
+        }
+
+        .alert-success {
+            background-color: #4CAF50;
+            /* Green background for success */
         }
     </style>
 </head>
@@ -61,6 +95,7 @@
             </ul>
         </div>
     </nav>
+
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-6 col-lg-4">
@@ -75,6 +110,15 @@
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Login</button>
                 </form>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
             </div>
         </div>
     </div>
