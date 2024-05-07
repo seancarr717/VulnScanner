@@ -3,13 +3,15 @@
 {% block title %}Scans for {{ ip_address }}{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2>Scans for IP: {{ ip_address }}</h2>
-    {% for scan in scans %}
-        <div>
-            <h4>Scan Date: {{ scan.created_at }}</h4>
-            <pre>{{ scan.xml_data }}</pre>
-        </div>
-    {% endfor %}
+<div class="container mt-4">
+    <h2 class="text-center">Scans for IP: {{ ip_address }}</h2>
+    <div class="list-group">
+        {% for scan in scans %}
+            <div class="list-group-item list-group-item-action list-group-item-dark">
+                <h4 class="mb-3">Scan Date: {{ scan.created_at }}</h4>
+                <pre class="bg-dark text-white">{{ scan.xml_data }}</pre>
+            </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}

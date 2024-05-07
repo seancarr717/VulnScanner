@@ -3,13 +3,13 @@
 {% block title %}Dashboard Home{% endblock %}
 
 {% block content %}
-<div class="container">
-  <h2>Welcome to Simple Scan Dashboard</h2>
-  <h4>Scanned IPs:</h4>
-  <ul>
+<div class="container mt-4">
+  <h2 class="text-center">Welcome to Simple Scan Dashboard</h2>
+  <h4 class="mb-3">Scanned IPs:</h4>
+  <div class="list-group">
     {% for ip in unique_ips %}
-      <li><a href="{{ url_for('show_scans', ip_address=ip.ip_address) }}">{{ ip.ip_address }}</a></li>
+      <a href="{{ url_for('show_scans', ip_address=ip.ip_address) }}" class="list-group-item list-group-item-action list-group-item-dark">{{ ip.ip_address }}</a>
     {% endfor %}
-  </ul>
+  </div>
 </div>
 {% endblock %}
