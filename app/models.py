@@ -16,9 +16,10 @@ class User(db.Model):
     
 class NetworkScan(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    ip_address = db.Column(db.String(15), index=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # Reference to the User model
+    ip_address = db.Column(db.String(15), nullable=False)
     xml_data = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
-        return f'<ScanResult {self.ip_address}>'
+        return f'<NetworkScan {self.ip_address}>'

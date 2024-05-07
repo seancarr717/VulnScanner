@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, session,request
+from flask import render_template, redirect, url_for, session,request,abort
 from .auth import login, logout,register
 from .network import run_nmap
 from .web import start_spider, start_active_scan
@@ -7,9 +7,9 @@ from .models import db, NetworkScan
 def configure_routes(app):
     @app.route('/')
     def home():
-        if 'username' in session:
+        if 'user_id' in session:
             unique_ips = NetworkScan.query.with_entities(NetworkScan.ip_address).distinct()
-            return render_template('index.html', username=session['username'], unique_ips=unique_ips)
+            return render_template('index.html', username=session['user_id'], unique_ips=unique_ips)
         return redirect(url_for('login_route'))
 
     @app.route('/login', methods=['GET', 'POST'])
@@ -31,18 +31,23 @@ def configure_routes(app):
 
     @app.route('/network', methods=['GET', 'POST'])
     def network_route():
-        if 'username' not in session:
+        if 'user_id' not in session:
             return redirect(url_for('login_route'))
         return run_nmap()
     
     @app.route('/scans/<ip_address>')
     def show_scans(ip_address):
-        scans = NetworkScan.query.filter_by(ip_address=ip_address).all()
+        if 'user_id' not in session:
+            return redirect(url_for('login_route'))
+    
+        scans = NetworkScan.query.filter_by(ip_address=ip_address, user_id=session['user_id']).all()
+        if not scans:
+            abort(404)  # Or handle the case where no scans are found differently
         return render_template('scans.html', scans=scans, ip_address=ip_address)
 
     @app.route('/spider')
     def spider_route():
-        if 'username' in session:
+        if 'user_id' in session:
             return render_template('spider.html')
         return redirect(url_for('login_route'))
 

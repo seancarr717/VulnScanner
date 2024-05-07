@@ -1,4 +1,4 @@
-from flask import request, render_template, redirect, url_for
+from flask import request, render_template, redirect, url_for,session
 from .models import db, NetworkScan
 import subprocess
 import xml.etree.ElementTree as ET
@@ -33,7 +33,7 @@ def run_nmap():
         scan_results = parse_nmap_xml(result.stdout)
 
         # Save the XML output to the database
-        new_scan = NetworkScan(ip_address=ip_address, xml_data=result.stdout)
+        new_scan = NetworkScan(user_id=session['user_id'], ip_address=ip_address, xml_data=result.stdout)
         db.session.add(new_scan)
         db.session.commit()
 
