@@ -8,8 +8,8 @@ def configure_routes(app):
     @app.route('/')
     def home():
         if 'user_id' in session:
-            unique_ips = NetworkScan.query.with_entities(NetworkScan.ip_address).distinct()
-            return render_template('index.html', username=session['user_id'], unique_ips=unique_ips)
+            unique_ips = NetworkScan.query.filter_by(user_id=session['user_id']).with_entities(NetworkScan.ip_address).distinct()
+            return render_template('index.html', unique_ips=unique_ips)
         return redirect(url_for('login_route'))
 
     @app.route('/login', methods=['GET', 'POST'])
