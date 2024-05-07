@@ -15,6 +15,7 @@ bin-release/
 #files not needed
 .venv
 migrations/
+myenv/
 __pycache__/
 Zap Sessions/
 # Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
