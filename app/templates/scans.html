@@ -1,0 +1,15 @@
+{% extends 'default.html' %}
+
+{% block title %}Scans for {{ ip_address }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Scans for IP: {{ ip_address }}</h2>
+    {% for scan in scans %}
+        <div>
+            <h4>Scan Date: {{ scan.created_at }}</h4>
+            <pre>{{ scan.xml_data }}</pre>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

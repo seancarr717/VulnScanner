@@ -1,4 +1,5 @@
 from flask import request, render_template, redirect, url_for
+from .models import db, NetworkScan
 import subprocess
 import xml.etree.ElementTree as ET
 
@@ -24,11 +25,17 @@ def run_nmap():
         ports = request.form['ports']
         flags = request.form['flags']
         if not ports:
-            ports='22,80,443'
+            ports = '22,80,443'
         if not flags:
-            flags='-sV'
+            flags = '-sV'
         command = f"nmap {flags} -p {ports} {ip_address} -oX -"
         result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, text=True)
         scan_results = parse_nmap_xml(result.stdout)
+
+        # Save the XML output to the database
+        new_scan = NetworkScan(ip_address=ip_address, xml_data=result.stdout)
+        db.session.add(new_scan)
+        db.session.commit()
+
         return render_template('network.html', scan_results=scan_results)
     return render_template('network.html')
