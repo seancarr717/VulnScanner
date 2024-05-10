@@ -1,8 +1,8 @@
 from flask import request, jsonify
 import requests
 
-ZAP_API_URL = "http://localhost:9090"
-ZAP_API_KEY = "1mag%GjdDmjj3or!jt24gp1zk"
+ZAP_API_URL = "http://ec2-51-20-35-101.eu-north-1.compute.amazonaws.com:9090"
+ZAP_API_KEY = "AMWFOWAIOFNA"
 
 def start_spider():
     return start_zap_scan(request, 'spider')
