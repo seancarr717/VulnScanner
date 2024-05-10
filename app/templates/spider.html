@@ -45,7 +45,8 @@
     <!--buttons to start scans functions-->
     <button onclick="startSpider()" class="btn btn-primary">Start Spider Scan</button>
     <button onclick="startActiveScan()" class="btn btn-secondary">Start Active Scan</button>
-    <button onclick="checkScanStatus()" class="btn btn-info">Check Scan Status</button>
+    <button onclick="viewScanStatus()" class="btn btn-info">Check Scan Status</button>
+    <input type="text" id="scanId" class="form-control" placeholder="Enter scanId to fetch results">
   </div>
 </div>
 
@@ -79,21 +80,18 @@
   function startActiveScan() {
     startScan('/start_active_scan');
   }
-  function checkScanStatus() {
-    fetch('/scan_status')
+  function viewScanStatus(scanId) {
+    var scanId = document.getElementById('scanId').value;
+    fetch(`/view_scan_status?scan_id=${scanId}`)
     .then(response => response.json())
     .then(data => {
         let outputHtml = '';
-        if (data && data.length > 0) {
-            data.forEach(scan => {
-                outputHtml += `<div class="scan-status">
-                                   <p>Scan ID: ${scan.scan_id}</p>
-                                   <p>Type: ${scan.scan_type}</p>
-                                   <p>Status: ${scan.status}</p>
-                               </div>`;
-            });
+        if (data && data.status) {
+            outputHtml = `<div class="scan-status">
+                              <p>Status: ${data.status}</p>
+                          </div>`;
         } else {
-            outputHtml = '<p>No scans found.</p>';
+            outputHtml = '<p>No status found or error occurred.</p>';
         }
         document.getElementById('scanStatusDisplay').innerHTML = outputHtml;
     })
