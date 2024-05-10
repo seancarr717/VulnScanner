@@ -49,7 +49,7 @@
   </div>
 </div>
 
-<pre id="output"></pre>
+<div id="scanStatusDisplay"></div>
 
 <!--SCRIPT for when sending requests to the backend zap api -->
 <script>
@@ -79,22 +79,32 @@
   function startActiveScan() {
     startScan('/start_active_scan');
   }
-  function checkScanStatus() {
+  function CheckScanStatus() {
     fetch('/scan_status')
-      .then(response => response.json())
-      .then(data => {
-        // Handle data here, e.g., display it in a modal or a new div
-        console.log(data);
-      })
-      .catch(error => console.error('Error fetching scan status:', error));
-  }
+    .then(response => response.json())
+    .then(data => {
+        let outputHtml = '';
+        if (data && data.length > 0) {
+            data.forEach(scan => {
+                outputHtml += `<div class="scan-status">
+                                   <p>Scan ID: ${scan.scan_id}</p>
+                                   <p>Type: ${scan.scan_type}</p>
+                                   <p>Status: ${scan.status}</p>
+                               </div>`;
+            });
+        } else {
+            outputHtml = '<p>No scans found.</p>';
+        }
+        document.getElementById('scanStatusDisplay').innerHTML = outputHtml;
+    })
+    .catch(error => {
+        console.error('Error fetching scan status:', error);
+        document.getElementById('scanStatusDisplay').innerHTML = '<p>Error fetching scan status.</p>';
+    });
+}
 
 
 </script>
-<div id="scanStatusList">
-  <h3>Current Scan Tasks</h3>
-  <ul id="scanList"></ul>
-</div>
 
 
 </div>
