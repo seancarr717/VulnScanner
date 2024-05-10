@@ -4,21 +4,21 @@
 
 {% block content %}
 <style>
-    
   #targetUrl {
-    background-color: #323840; 
-    color: #fff; 
-    border: 1px solid #6c757d; 
-    margin-bottom: 1rem; 
+    background-color: #323840;
+    color: #fff;
+    border: 1px solid #6c757d;
+    margin-bottom: 1rem;
   }
+
   .container {
     height: 75vh;
   }
 
-  
+
   .btn-primary {
-    background-color: #495057; 
-    border-color: #495057; 
+    background-color: #495057;
+    border-color: #495057;
   }
 
   /* Add hover effect for the primary button */
@@ -29,8 +29,8 @@
 
   /* Style the secondary button */
   .btn-secondary {
-    background-color: #6c757d; 
-    border-color: #6c757d; 
+    background-color: #6c757d;
+    border-color: #6c757d;
   }
 
   /* Add hover effect for the secondary button */
@@ -40,78 +40,63 @@
   }
 </style>
 <div class="container d-flex justify-content-center align-items-center">
-    <div class="row justify-content-center">
-      <input type="text" id="targetUrl" class="form-control" placeholder="Enter target URL">
-      <!--buttons to start scans functions-->
-      <button onclick="startSpider()" class="btn btn-primary">Start Spider Scan</button>
-      <button onclick="startActiveScan()" class="btn btn-secondary">Start Active Scan</button>
-    </div>
+  <div class="row justify-content-center">
+    <input type="text" id="targetUrl" class="form-control" placeholder="Enter target URL">
+    <!--buttons to start scans functions-->
+    <button onclick="startSpider()" class="btn btn-primary">Start Spider Scan</button>
+    <button onclick="startActiveScan()" class="btn btn-secondary">Start Active Scan</button>
+    <button onclick="checkScanStatus()" class="btn btn-info">Check Scan Status</button>
   </div>
-  
-    <pre id="output"></pre>
+</div>
 
-    <!--SCRIPT for when sending requests to the backend zap api -->
-    <script>
-        function startScan(apiEndpoint) {
-            //gets the target url from the input field
-            var targetUrl = document.getElementById('targetUrl').value;
-            //sends the target url to the backend which then sends it to zap api with the required content header and method type in json
-            fetch(apiEndpoint, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url: targetUrl })
-            })
+<pre id="output"></pre>
 
-                //gets response from backend
-                .then(response => response.json())
-                //gets output from backend and converts from json to string
-                .then(data => document.getElementById('output').textContent = JSON.stringify(data, null, 2))
-                //catches errors in console
-                .catch(error => console.error('Error:', error));
+<!--SCRIPT for when sending requests to the backend zap api -->
+<script>
+  function startScan(apiEndpoint) {
+    //gets the target url from the input field
+    var targetUrl = document.getElementById('targetUrl').value;
+    //sends the target url to the backend which then sends it to zap api with the required content header and method type in json
+    fetch(apiEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: targetUrl })
+    })
 
-        }
-        //starts spider function when the button is clicked in our backend
-        function startSpider() {
-            startScan('/start_spider');
-        }
-        //starts active sscan in the backend when button clicked
-        function startActiveScan() {
-            startScan('/start_active_scan');
-        }
+      //gets response from backend
+      .then(response => response.json())
+      //gets output from backend and converts from json to string
+      .then(data => document.getElementById('output').textContent = JSON.stringify(data, null, 2))
+      //catches errors in console
+      .catch(error => console.error('Error:', error));
+
+  }
+  //starts spider function when the button is clicked in our backend
+  function startSpider() {
+    startScan('/start_spider');
+  }
+  //starts active sscan in the backend when button clicked
+  function startActiveScan() {
+    startScan('/start_active_scan');
+  }
+  function checkScanStatus() {
+    fetch('/scan_status')
+      .then(response => response.json())
+      .then(data => {
+        // Handle data here, e.g., display it in a modal or a new div
+        console.log(data);
+      })
+      .catch(error => console.error('Error fetching scan status:', error));
+  }
 
 
-
-    </script>
-    <div id="scanStatusList">
-      <h3>Current Scan Tasks</h3>
-      <ul id="scanList"></ul>
-  </div>
-  
-  <script>
-    let displayedScans = new Set();  // This set will store the IDs of scans already displayed
-
-    function fetchScanStatus() {
-        fetch('/get_scans_status')
-            .then(response => response.json())
-            .then(data => updateScanList(data))
-            .catch(error => console.error('Error fetching scan status:', error));
-    }
-
-    function updateScanList(data) {
-        const scanList = document.getElementById('scanList');
-        data.forEach(scan => {
-            if (!displayedScans.has(scan.scanId)) {
-                const listItem = document.createElement('li');
-                listItem.textContent = `Scan ID: ${scan.scanId}, Status: ${scan.status}`;
-                scanList.appendChild(listItem);
-                displayedScans.add(scan.scanId);  
-            }
-        });
-    }
-
-    // Fetch scan status periodically
-    setInterval(fetchScanStatus, 5000);  
 </script>
-    </div>
+<div id="scanStatusList">
+  <h3>Current Scan Tasks</h3>
+  <ul id="scanList"></ul>
+</div>
+
+
+</div>
 </div>
 {% endblock %}
