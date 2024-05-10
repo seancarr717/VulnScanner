@@ -79,7 +79,7 @@
   function startActiveScan() {
     startScan('/start_active_scan');
   }
-  function CheckScanStatus() {
+  function checkScanStatus() {
     fetch('/scan_status')
     .then(response => response.json())
     .then(data => {
