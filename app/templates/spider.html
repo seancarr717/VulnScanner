@@ -54,35 +54,57 @@
     <script>
       function startScan(apiEndpoint) {
           var targetUrl = document.getElementById('targetUrl').value;
+          if (!targetUrl) {
+              document.getElementById('output').textContent = 'Please enter a URL.';
+              return;
+          }
+    
+          document.getElementById('output').textContent = 'Starting scan...';
+    
           fetch(apiEndpoint, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ url: targetUrl })
           })
-          .then(response => response.json())
+          .then(response => {
+              if (!response.ok) {
+                  throw new Error('Network response was not ok: ' + response.statusText);
+              }
+              return response.json();
+          })
           .then(data => {
-              document.getElementById('output').textContent = JSON.stringify(data, null, 2);
-              if (data.scan_id) {
-                  trackScanProgress(apiEndpoint, data.scan_id);
+              if (data.error) {
+                  document.getElementById('output').textContent = 'Error: ' + data.error;
+              } else {
+                  document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+                  if (data.scan_id) {
+                      trackScanProgress(apiEndpoint, data.scan_id);
+                  }
               }
           })
-          .catch(error => console.error('Error:', error));
+          .catch(error => {
+              console.error('Error:', error);
+              document.getElementById('output').textContent = 'Error: ' + error.message;
+          });
       }
       
       function trackScanProgress(apiEndpoint, scanId) {
-          const statusEndpoint = `${apiEndpoint}/${scanId}/status`; // Adjust this endpoint as necessary
+          const statusEndpoint = `${apiEndpoint}/${scanId}/status`; 
           setTimeout(function() {
               fetch(statusEndpoint)
               .then(response => response.json())
               .then(data => {
                   if (data.status === 'completed') {
-                      document.getElementById('output').textContent += "\nScan completed. Results: " + JSON.stringify(data.results);
+                      document.getElementById('output').textContent += "\nScan completed. Results: " + JSON.stringify(data.results, null, 2);
                   } else {
                       document.getElementById('output').textContent += "\nScan status: " + data.status;
                       trackScanProgress(apiEndpoint, scanId); // Recursively check status
                   }
               })
-              .catch(error => console.error('Error:', error));
+              .catch(error => {
+                  console.error('Error:', error);
+                  document.getElementById('output').textContent += '\nError checking scan progress: ' + error.message;
+              });
           }, 10000); // Check every 10 seconds
       }
       
@@ -93,10 +115,5 @@
       function startActiveScan() {
           startScan('/start_active_scan');
       }
-
-
-
     </script>
-    </div>
-</div>
 {% endblock %}
