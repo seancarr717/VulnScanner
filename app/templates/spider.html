@@ -89,24 +89,22 @@
       }
       
       function trackScanProgress(apiEndpoint, scanId) {
-          const statusEndpoint = `${apiEndpoint}/${scanId}/status`; 
-          setTimeout(function() {
-              fetch(statusEndpoint)
-              .then(response => response.json())
-              .then(data => {
-                  if (data.status === 'completed') {
-                      document.getElementById('output').textContent += "\nScan completed. Results: " + JSON.stringify(data.results, null, 2);
-                  } else {
-                      document.getElementById('output').textContent += "\nScan status: " + data.status;
-                      trackScanProgress(apiEndpoint, scanId); // Recursively check status
-                  }
-              })
-              .catch(error => {
-                  console.error('Error:', error);
-                  document.getElementById('output').textContent += '\nError checking scan progress: ' + error.message;
-              });
-          }, 5000); // Check every 10 seconds
-      }
+    const statusEndpoint = `${apiEndpoint}/${scanId}/status`;
+    fetch(statusEndpoint)
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'completed') {
+                document.getElementById('output').textContent = "Scan completed. Results: " + JSON.stringify(data.results, null, 2);
+            } else {
+                document.getElementById('output').textContent = "Scan status: " + data.status;
+                setTimeout(() => trackScanProgress(apiEndpoint, scanId), 5000); // Poll every 5 seconds
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('output').textContent = 'Error checking scan progress: ' + error.message;
+        });
+}
       
       function startSpider() {
           startScan('/start_spider');
