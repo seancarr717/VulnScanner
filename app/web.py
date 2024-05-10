@@ -40,10 +40,11 @@ def start_zap_scan(request, scan_type):
     
 def view_scan_status():
     scan_id = request.args.get('scan_id')
+    print('scan_id')
     if not scan_id:
         return jsonify({"error": "scan_id is required"}), 400
 
-    zap_endpoint = f"{ZAP_API_URL}/JSON/ascan/view/status/?apikey={ZAP_API_KEY}&scanId={scan_id}"
+    zap_endpoint = f"{ZAP_API_URL}/JSON/ascan/view/status/?apikey={ZAP_API_KEY}"
     response = requests.get(zap_endpoint)
     if response.status_code == 200:
         return jsonify(response.json()), 200
