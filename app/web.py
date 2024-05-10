@@ -2,6 +2,7 @@ from flask import request, jsonify,session
 import requests
 import requests
 import time
+import json
 from .models import db, ScanResult
 
 ZAP_API_URL = "http://ec2-51-20-35-101.eu-north-1.compute.amazonaws.com:9090"
@@ -44,7 +45,7 @@ def track_scan_progress(scan_type, scan_id, user_id):
             results = results_response.json()
             scan = ScanResult.query.filter_by(scan_id=scan_id, user_id=user_id).first()
             if scan:
-                scan.results = results
+                scan.results = json.dumps(results)
                 scan.status = 'completed'
                 db.session.commit()
             break
