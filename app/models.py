@@ -23,3 +23,17 @@ class NetworkScan(db.Model):
 
     def __repr__(self):
         return f'<NetworkScan {self.ip_address}>'
+    
+class ScanResult(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    scan_id = db.Column(db.String(128), nullable=False)  # Unique identifier for the scan
+    scan_type = db.Column(db.String(50), nullable=False)  # Type of scan ('spider', 'ascan', etc.)
+    status = db.Column(db.String(50), nullable=False, default='started')  # Status of the scan
+    results = db.Column(db.Text, nullable=True)  # JSON string of results
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship('User', backref=db.backref('scan_results', lazy=True))
+
+    def __repr__(self):
+        return f'<ScanResult {self.scan_type} {self.scan_id} by User {self.user_id}>'
