@@ -52,32 +52,47 @@
 
     <!--SCRIPT for when sending requests to the backend zap api -->
     <script>
-        function startScan(apiEndpoint) {
-            //gets the target url from the input field
-            var targetUrl = document.getElementById('targetUrl').value;
-            //sends the target url to the backend which then sends it to zap api with the required content header and method type in json
-            fetch(apiEndpoint, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url: targetUrl })
-            })
-
-                //gets response from backend
-                .then(response => response.json())
-                //gets output from backend and converts from json to string
-                .then(data => document.getElementById('output').textContent = JSON.stringify(data, null, 2))
-                //catches errors in console
-                .catch(error => console.error('Error:', error));
-
-        }
-        //starts spider function when the button is clicked in our backend
-        function startSpider() {
-            startScan('/start_spider');
-        }
-        //starts active sscan in the backend when button clicked
-        function startActiveScan() {
-            startScan('/start_active_scan');
-        }
+      function startScan(apiEndpoint) {
+          var targetUrl = document.getElementById('targetUrl').value;
+          fetch(apiEndpoint, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ url: targetUrl })
+          })
+          .then(response => response.json())
+          .then(data => {
+              document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+              if (data.scan_id) {
+                  trackScanProgress(apiEndpoint, data.scan_id);
+              }
+          })
+          .catch(error => console.error('Error:', error));
+      }
+      
+      function trackScanProgress(apiEndpoint, scanId) {
+          const statusEndpoint = `${apiEndpoint}/${scanId}/status`; // Adjust this endpoint as necessary
+          setTimeout(function() {
+              fetch(statusEndpoint)
+              .then(response => response.json())
+              .then(data => {
+                  if (data.status === 'completed') {
+                      document.getElementById('output').textContent += "\nScan completed. Results: " + JSON.stringify(data.results);
+                  } else {
+                      document.getElementById('output').textContent += "\nScan status: " + data.status;
+                      trackScanProgress(apiEndpoint, scanId); // Recursively check status
+                  }
+              })
+              .catch(error => console.error('Error:', error));
+          }, 10000); // Check every 10 seconds
+      }
+      
+      function startSpider() {
+          startScan('/start_spider');
+      }
+      
+      function startActiveScan() {
+          startScan('/start_active_scan');
+      }
 
 
 
