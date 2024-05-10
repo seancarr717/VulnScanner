@@ -1,7 +1,7 @@
-from flask import render_template, redirect, url_for, session,request,abort
+from flask import render_template, redirect, url_for, session,request,abort,jsonify
 from .auth import login, logout,register
 from .network import run_nmap
-from .web import start_spider, start_active_scan
+from .web import start_spider, start_active_scan,get_scans_status
 from .models import db, NetworkScan
 
 def configure_routes(app):
@@ -58,3 +58,11 @@ def configure_routes(app):
     @app.route('/start_active_scan', methods=['POST'])
     def start_active_scan_route():
         return start_active_scan()
+    
+    @app.route('/get_scans_status')
+    def scans_status_route():
+        if 'user_id' not in session:
+            return redirect(url_for('login_route'))
+        scans_status = get_scans_status()
+        return jsonify(scans_status)
+    

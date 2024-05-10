@@ -19,3 +19,9 @@ def start_zap_scan(request, scan_type):
     response = requests.get(zap_endpoint)
     scan_id = response.json().get('scan') if response.status_code == 200 else None
     return jsonify({"message": f"{scan_type.capitalize()} scan started", "scan_id": scan_id})
+
+def get_scans_status():
+    zap_endpoint = f"{ZAP_API_URL}/JSON/ascan/view/scans/"
+    response = requests.get(zap_endpoint)
+    scans = response.json() if response.status_code == 200 else {}
+    return scans
