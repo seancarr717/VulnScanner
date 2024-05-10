@@ -1,8 +1,8 @@
-from flask import render_template, redirect, url_for, session,request,abort,jsonify
+from flask import render_template, redirect, url_for, session,request,abort
 from .auth import login, logout,register
 from .network import run_nmap
 from .web import start_spider, start_active_scan
-from .models import db, NetworkScan, ScanResult
+from .models import db, NetworkScan
 
 def configure_routes(app):
     @app.route('/')
@@ -58,16 +58,3 @@ def configure_routes(app):
     @app.route('/start_active_scan', methods=['POST'])
     def start_active_scan_route():
         return start_active_scan()
-    
-    @app.route('/download_results/<scan_type>/<scan_id>')
-    def download_results(scan_type, scan_id):
-        if 'user_id' not in session:
-            return jsonify({"error": "User not logged in"}), 401
-
-        user_id = session['user_id']
-        scan = ScanResult.query.filter_by(scan_id=scan_id, scan_type=scan_type, user_id=user_id).first()
-        if scan and scan.results:
-            return jsonify({scan.results})
-        return jsonify({"error": "Results not found or scan not completed"}), 404
-    
-
