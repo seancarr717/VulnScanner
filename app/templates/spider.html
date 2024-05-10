@@ -45,11 +45,15 @@
     <!--buttons to start scans functions-->
     <button onclick="startSpider()" class="btn btn-primary">Start Spider Scan</button>
     <button onclick="startActiveScan()" class="btn btn-secondary">Start Active Scan</button>
-    <button onclick="viewScanStatus()" class="btn btn-info">Check Scan Status</button>
-    <input type="text" id="scanId" class="form-control" placeholder="Enter scanId to fetch results">
   </div>
 </div>
 
+<div class="container d-flex justify-content-center align-items-center">
+  <div class="row justify-content-center">
+<input type="text" id="scanId" class="form-control" placeholder="Enter scanId to fetch results">
+<button onclick="viewScanStatus()" class="btn btn-info">Check Scan Status</button>
+</div>
+</div>
 <pre id="output"></pre>
 <div id="scanStatusDisplay"></div>
 <!--SCRIPT for when sending requests to the backend zap api -->
