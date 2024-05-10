@@ -84,24 +84,28 @@
   function startActiveScan() {
     startScan('/start_active_scan');
   }
-  function viewScanStatus(scanId) {
-    var scanId = document.getElementById('scanId').value;
-    fetch(`/view_scan_status?scan_id=${scanId}`)
-    .then(response => response.json())
+  function checkScanStatus(scanId) {
+    const url = `/view_scan_status?scan_id=${scanId}`;
+    console.log(`Requesting scan status for ID: ${scanId}`);
+
+    fetch(url)
+    .then(response => {
+        console.log(`Received response for scan ID ${scanId}:`, response);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
-        let outputHtml = '';
-        if (data && data.status) {
-            outputHtml = `<div class="scan-status">
+        console.log(`Scan status data for ${scanId}:`, data);
+        let outputHtml = `<div class="scan-status">
                               <p>Status: ${data.status}</p>
                           </div>`;
-        } else {
-            outputHtml = '<p>No status found or error occurred.</p>';
-        }
         document.getElementById('scanStatusDisplay').innerHTML = outputHtml;
     })
     .catch(error => {
-        console.error('Error fetching scan status:', error);
-        document.getElementById('scanStatusDisplay').innerHTML = '<p>Error fetching scan status.</p>';
+        console.error(`Error fetching scan status for ${scanId}:`, error);
+        document.getElementById('scanStatusDisplay').innerHTML = `<p>Error fetching scan status: ${error.message}</p>`;
     });
 }
 
