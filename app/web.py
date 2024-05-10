@@ -49,4 +49,4 @@ def track_scan_progress(scan_type, scan_id, user_id):
                 scan.status = 'completed'
                 db.session.commit()
             break
-        time.sleep(10)  # Wait for 10 seconds before polling again
+        time.sleep(5)  # Wait for 10 seconds before polling again
