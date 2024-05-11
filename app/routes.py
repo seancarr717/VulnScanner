@@ -1,7 +1,7 @@
 from flask import render_template, redirect, url_for, session,request,abort,jsonify
 from .auth import login, logout,register
 from .network import run_nmap
-from .web import start_spider, start_active_scan, get_scan_status, api_generate_xml_report,view_scan_result
+from .web import start_spider, start_active_scan, get_scan_status,view_scan_result,generate_xml_report
 from .models import db, NetworkScan,ScanResult
 
 def configure_routes(app):
@@ -65,7 +65,7 @@ def configure_routes(app):
     
     @app.route('/generate_xml_report', methods=['POST'])
     def generate_xml_report_route():
-        return api_generate_xml_report()
+        return generate_xml_report()
     
     @app.route('/view_scan_result', methods=['GET'])
     def view_scan_result_route():
