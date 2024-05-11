@@ -38,7 +38,7 @@ def get_scan_status():
     
 
 def generate_xml_report(scan_id):
-    report_endpoint = f"{ZAP_API_URL}/OTHER/core/other/xmlreport/?apikey={ZAP_API_KEY}&formMethod=GET"
+    report_endpoint = f"{ZAP_API_URL}/OTHER/core/other/xmlreport/?apikey={ZAP_API_KEY}&scanId={scan_id}&formMethod=GET"
     response = requests.get(report_endpoint)
     if response.status_code == 200:
         return response.content  # This should be the XML content
