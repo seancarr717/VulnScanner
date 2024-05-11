@@ -18,35 +18,19 @@ def start_zap_scan(request, scan_type):
         return jsonify({"error": "URL is required"}), 400
     zap_endpoint = f"{ZAP_API_URL}/JSON/{scan_type}/action/scan?apikey={ZAP_API_KEY}&url={target_url}"
     response = requests.get(zap_endpoint)
-    if response.status_code == 200:
-        scan_data = response.json()
-        scan_id = scan_data.get('scan')
-        if scan_id:
-            new_scan = ScanResult(
-                scan_id=scan_id,
-                scan_type=scan_type,
-                status='started',
-                user_id=session.get('user_id'),
-                results=''
-            )
-            db.session.add(new_scan)
-            db.session.commit()
-            return jsonify({"message": "Scan started", "scan_id": scan_id}), 200
-        else:
-            return jsonify({"error": "Failed to retrieve scan ID"}), 500
-    else:
-        return jsonify({"error": "Failed to start scan"}), response.status_code
-    
-    
-def view_scan_status():
-    scan_id = request.args.get('scan_id')
-    print('scan_id')
-    if not scan_id:
-        return jsonify({"error": "scan_id is required"}), 400
+    scan_id = response.json().get('scan') if response.status_code == 200 else None
+    return jsonify({"message": f"{scan_type.capitalize()} scan started", "scan_id": scan_id})
 
-    zap_endpoint = f"{ZAP_API_URL}/JSON/ascan/view/status/?apikey={ZAP_API_KEY}"
+def get_scan_status():
+    data = request.get_json()
+    scan_id = data.get('scanId')
+    if not scan_id:
+        return jsonify({"error": "Scan ID is required"}), 400
+    
+    zap_endpoint = f"{ZAP_API_URL}/JSON/ascan/view/status/?apikey={ZAP_API_KEY}&scanId={scan_id}"
     response = requests.get(zap_endpoint)
+    
     if response.status_code == 200:
-        return jsonify(response.json()), 200
+        return jsonify(response.json())
     else:
-        return jsonify({"error": "Failed to fetch scan status"}), response.status_code   
+        return jsonify({"error": "Failed to fetch scan status"}), response.status_code
