@@ -56,14 +56,21 @@ def api_generate_xml_report():
         return jsonify(xml_report), 400
 
     
+    # Decode XML report once, assuming xml_report is in bytes
+    decoded_xml_report = xml_report.decode('utf-8') if isinstance(xml_report, bytes) else xml_report
+
+    # Query the database for an existing scan result
     scan_result = ScanResult.query.filter_by(scan_id=scan_id).first()
+
     if scan_result:
-        scan_result.xml_report = xml_report.decode('utf-8')  
+        # If a scan result exists, update the xml_report
+        scan_result.xml_report = decoded_xml_report
     else:
-        scan_result = ScanResult(scan_id=scan_id, xml_report=xml_report.decode('utf-8'))
-        db.session.add(scan_result)
-        
-        db.session.commit()
+        scan_result = ScanResult(scan_id=scan_id, xml_report=decoded_xml_report)
+    db.session.add(scan_result)
+
+    
+    db.session.commit()
 
     return jsonify({"message": "XML report generated successfully"})
 
