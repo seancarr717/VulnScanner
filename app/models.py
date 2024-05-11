@@ -32,6 +32,7 @@ class ScanResult(db.Model):
     results = db.Column(db.Text, nullable=True)  # JSON string of results
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    xml_report = db.Column(db.Text)
 
     user = db.relationship('User', backref=db.backref('scan_results', lazy=True))
 

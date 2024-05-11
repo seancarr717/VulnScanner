@@ -47,7 +47,7 @@
     <button onclick="startSpider()" class="btn btn-primary">Start Spider Scan</button>
     <button onclick="startActiveScan()" class="btn btn-secondary">Start Active Scan</button>
     <button onclick="viewScanStatus()" class="btn btn-info">check scan status</button>
-    <button onclick="fetchAndSaveResults()" class="btn btn-success">Fetch and Save Results</button>
+    <button onclick="generateXmlReport()">Generate XML Report</button>
   </div>
 </div>
 
@@ -98,20 +98,27 @@
   }
 
   
-  function fetchAndSaveResults() {
+function generateXmlReport() {
     var scanId = document.getElementById('scanId').value;
-    fetch('/fetch_and_save_results', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ scanId: scanId })
+    fetch('/generate_xml_report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scanId: scanId })
     })
     .then(response => response.json())
     .then(data => {
-      document.getElementById('output').textContent = 'Results: ' + JSON.stringify(data, null, 2);
+        if (data.message) {
+            alert('XML Report Generated Successfully');
+        } else {
+            alert('Error: ' + data.error);
+        }
     })
     .catch(error => console.error('Error:', error));
-  }
+}
 
+
+  
+  
 
 
 

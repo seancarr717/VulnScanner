@@ -37,37 +37,32 @@ def get_scan_status():
         return jsonify({"error": "Failed to fetch scan status"}), response.status_code
     
 
-def fetch_scan_results(scan_id, scan_type):
-    results_endpoint = f"{ZAP_API_URL}/JSON/{scan_type}/view/results?apikey={ZAP_API_KEY}&scanId={scan_id}"
-    response = requests.get(results_endpoint)
+def generate_xml_report(scan_id):
+    report_endpoint = f"{ZAP_API_URL}/OTHER/core/other/xmlreport/?apikey={ZAP_API_KEY}&formMethod=GET"
+    response = requests.get(report_endpoint)
     if response.status_code == 200:
-        results_data = response.json()
-        return results_data
+        return response.content  # This should be the XML content
     else:
-        return jsonify({"error": "Failed to fetch scan results", "status_code": response.status_code})
+        return {"error": "Failed to generate XML report", "status_code": response.status_code}
     
-
-def fetch_and_save_results():
+def api_generate_xml_report():
     data = request.get_json()
     scan_id = data.get('scanId')
-    scan_type = 'ascan'  # or 'spider', depending on your setup
+    if not scan_id:
+        return jsonify({"error": "Scan ID is required"}), 400
 
-    results = fetch_scan_results(scan_id, scan_type)
-    if 'error' in results:
-        return jsonify(results), 400
+    xml_report = generate_xml_report(scan_id)
+    if isinstance(xml_report, dict) and 'error' in xml_report:
+        return jsonify(xml_report), 400
 
-    # Check if a record already exists for this scan
+    
     scan_result = ScanResult.query.filter_by(scan_id=scan_id).first()
     if scan_result:
-        # Update existing record
-        scan_result.results = results
-        scan_result.status = 'completed'
+        scan_result.xml_report = xml_report.decode('utf-8')  
     else:
-        # Create a new record
-        scan_result = ScanResult(scan_id=scan_id, scan_type=scan_type, results=results, status='completed')
+        scan_result = ScanResult(scan_id=scan_id, xml_report=xml_report.decode('utf-8'))
         db.session.add(scan_result)
+        
+        db.session.commit()
 
-    # Commit changes to the database
-    db.session.commit()
-    
-    return jsonify({"message": "Results fetched successfully", "results": results})
+    return jsonify({"message": "XML report generated successfully"})
