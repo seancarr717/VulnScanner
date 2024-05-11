@@ -38,6 +38,8 @@ def get_scan_status():
     
 
 def generate_xml_report(scan_id):
+    data = request.get_json()
+    scan_id = data.get('scanId')
     # Define API details
     
     report_endpoint = f"{ZAP_API_URL}/OTHER/core/other/xmlreport/?apikey={ZAP_API_KEY}&scanId={scan_id}&formMethod=GET"
