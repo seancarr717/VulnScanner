@@ -64,7 +64,9 @@ def configure_routes(app):
         return get_scan_status()
     
     @app.route('/generate_xml_report', methods=['POST'])
-    def generate_xml_report_route(scan_id):
+    def generate_xml_report_route():
+        data = request.get_json()
+        scan_id = data.get('scanId')
         return generate_xml_report(scan_id)
     
     @app.route('/view_scan_result', methods=['GET'])
