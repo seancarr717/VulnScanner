@@ -48,11 +48,14 @@
     <button onclick="startActiveScan()" class="btn btn-secondary">Start Active Scan</button>
     <button onclick="viewScanStatus()" class="btn btn-info">check scan status</button>
     <button onclick="generateXmlReport()">Generate XML Report</button>
+    <button onclick="viewXmlReport()">View XML Report</button>
   </div>
 </div>
 
 <pre id="output"></pre>
 <div id="scanStatusDisplay" class="alert alert-info" role="alert"></div>
+
+<pre id="xmlDisplay"></pre>
 
 <!--SCRIPT for when sending requests to the backend zap api -->
 <script>
@@ -114,6 +117,24 @@ function generateXmlReport() {
         }
     })
     .catch(error => console.error('Error:', error));
+}
+
+function viewXmlReport() {
+    var scanId = document.getElementById('scanId').value;
+    if (!scanId) {
+        alert("Please enter a scan ID.");
+        return;
+    }
+    fetch(`/view_scan_result?scanId=${scanId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert("Error: " + data.error);
+            } else {
+                document.getElementById('xmlDisplay').textContent = data.xml_report;
+            }
+        })
+        .catch(error => console.error('Error:', error));
 }
 
 

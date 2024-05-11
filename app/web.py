@@ -66,3 +66,14 @@ def api_generate_xml_report():
         db.session.commit()
 
     return jsonify({"message": "XML report generated successfully"})
+
+def view_scan_result():
+    scan_id = request.args.get('scanId')
+    if not scan_id:
+        return jsonify({"error": "Scan ID is required"}), 400
+
+    scan_result = ScanResult.query.filter_by(scan_id=scan_id).first()
+    if scan_result and scan_result.xml_report:
+        return jsonify({"scan_id": scan_id, "xml_report": scan_result.xml_report})
+    else:
+        return jsonify({"error": "No results found for the provided scan ID"}), 404
