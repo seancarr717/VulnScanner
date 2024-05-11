@@ -38,26 +38,20 @@ def get_scan_status():
     
 
 def generate_xml_report(scan_id):
+    # Define API details
+    
     report_endpoint = f"{ZAP_API_URL}/OTHER/core/other/xmlreport/?apikey={ZAP_API_KEY}&scanId={scan_id}&formMethod=GET"
-    response = requests.get(report_endpoint)
-    if response.status_code == 200:
-        return response.content  # This should be the XML content
-    else:
-        return {"error": "Failed to generate XML report", "status_code": response.status_code}
     
-def api_generate_xml_report():
-    data = request.get_json()
-    scan_id = data.get('scanId')
-    if not scan_id:
-        return jsonify({"error": "Scan ID is required"}), 400
+    # Attempt to fetch the XML report from the ZAP API
+    try:
+        response = requests.get(report_endpoint)
+        response.raise_for_status()  # Raises an HTTPError for bad responses
+        xml_report = response.content
+    except requests.RequestException as e:
+        return jsonify({"error": str(e)}), 400
 
-    xml_report = generate_xml_report(scan_id)
-    if isinstance(xml_report, dict) and 'error' in xml_report:
-        return jsonify(xml_report), 400
-
-    
-    # Decode XML report once, assuming xml_report is in bytes
-    decoded_xml_report = xml_report.decode('utf-8') if isinstance(xml_report, bytes) else xml_report
+    # Decode XML report, assuming xml_report is in bytes
+    decoded_xml_report = xml_report.decode('utf-8')
 
     # Query the database for an existing scan result
     scan_result = ScanResult.query.filter_by(scan_id=scan_id).first()
@@ -66,13 +60,17 @@ def api_generate_xml_report():
         # If a scan result exists, update the xml_report
         scan_result.xml_report = decoded_xml_report
     else:
+        # If no scan result exists, create a new one
         scan_result = ScanResult(scan_id=scan_id, xml_report=decoded_xml_report)
-    db.session.add(scan_result)
+        db.session.add(scan_result)
 
-    
-    db.session.commit()
-
-    return jsonify({"message": "XML report generated successfully"})
+    # Attempt to commit changes to the database
+    try:
+        db.session.commit()
+        return jsonify({"message": "XML report fetched and saved successfully"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 
 def view_scan_result():
     scan_id = request.args.get('scanId')
