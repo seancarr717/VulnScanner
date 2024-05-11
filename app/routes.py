@@ -1,7 +1,7 @@
 from flask import render_template, redirect, url_for, session,request,abort,jsonify
 from .auth import login, logout,register
 from .network import run_nmap
-from .web import start_spider, start_active_scan, get_scan_status
+from .web import start_spider, start_active_scan, get_scan_status,fetch_and_save_results
 from .models import db, NetworkScan,ScanResult
 
 def configure_routes(app):
@@ -63,4 +63,7 @@ def configure_routes(app):
     def get_scan_status_route():
         return get_scan_status()
     
-    
+    @app.route('/fetch_and_save_results', methods=['POST'])
+    def fetch_and_save_results_route():
+        return fetch_and_save_results()
+
