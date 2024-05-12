@@ -39,23 +39,25 @@
     border-color: #7a8288;
   }
 </style>
-<div class="container d-flex justify-content-center align-items-center">
-  <div class="row justify-content-center">
+<div class="container">
+  <!-- Form for starting scans -->
+  <div class="form-custom">
     <input type="text" id="targetUrl" class="form-control" placeholder="Enter target URL">
-    <!--buttons to start scans functions-->
     <button onclick="startSpider()" class="btn btn-primary">Start Spider Scan</button>
-    <button onclick="startActiveScan()" class="btn btn-secondary">Start Active Scan</button>
+    <button onclick="startActiveScan()" class="btn btn-primary">Start Active Scan</button>
+    <button onclick="generateXmlReport()" class="btn btn-primary">Generate Report</button>
+    <pre id="output"></pre>
+  </div>
+
+  <!-- Form for checking scan results -->
+  <div class="form-custom">
     <input type="text" id="scanId" class="form-control" placeholder="Enter scan Id">
-    <button onclick="viewScanStatus()" class="btn btn-info">Check scan status</button>
-    <button onclick="generateXmlReport()" class="btn btn-primary">Save Report</button>
-    <button onclick="viewXmlReport()" class="btn btn-secondary">View Report</button>
+    <button onclick="viewScanStatus()" class="btn btn-info">Check Scan Status</button>
+    <button onclick="viewXmlReport()" class="btn btn-info">View Report</button>
+    <div id="scanStatusDisplay" class="alert alert-info" role="alert"></div>
+    <pre id="xmlDisplay"></pre>
   </div>
 </div>
-
-<pre id="output"></pre>
-<div id="scanStatusDisplay" class="alert alert-info" role="alert"></div>
-
-<pre id="xmlDisplay"></pre>
 
 <!--SCRIPT for when sending requests to the backend zap api -->
 <script>
