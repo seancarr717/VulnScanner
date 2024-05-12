@@ -79,3 +79,15 @@ def generate_xml_report(scan_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+    
+def view_scan_result():
+    scan_id = request.args.get('scanId')
+    if not scan_id:
+        return jsonify({"error": "Scan ID is required"}), 400
+
+    scan_result = ScanResult.query.filter_by(scan_id=scan_id).first()
+    if not scan_result:
+        return jsonify({"error": "Scan result not found"}), 404
+
+    
+    return jsonify({"xml_report": scan_result.xml_report or "No report available."})

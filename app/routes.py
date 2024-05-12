@@ -1,7 +1,7 @@
 from flask import render_template, redirect, url_for, session,request,abort,jsonify
 from .auth import login, logout,register
 from .network import run_nmap
-from .web import start_spider, start_active_scan, get_scan_status,view_scan_result,generate_xml_report
+from .web import start_spider, start_active_scan, get_scan_status,generate_xml_report,view_scan_result
 from .models import db, NetworkScan,ScanResult
 
 def configure_routes(app):
