@@ -120,22 +120,30 @@ function generateXmlReport() {
 }
 
 function viewXmlReport() {
-    var scanId = document.getElementById('scanId').value;
-    if (!scanId) {
-        alert("Please enter a scan ID.");
-        return;
-    }
-    fetch(`/view_scan_result?scanId=${scanId}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                alert("Error: " + data.error);
-            } else {
-                document.getElementById('xmlDisplay').textContent = data.xml_report;
+            var scanId = document.getElementById('scanId').value;
+            if (!scanId) {
+                alert("Please enter a scan ID.");
+                return;
             }
-        })
-        .catch(error => console.error('Error:', error));
-}
+            fetch(`/view_scan_result?scanId=${scanId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        alert("Error: " + data.error);
+                    } else {
+                        document.getElementById('xmlDisplay').textContent = data.xml_report;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("Failed to fetch scan results: " + error.message);
+                });
+        }
 
 
   
