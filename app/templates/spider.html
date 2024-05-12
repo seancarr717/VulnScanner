@@ -4,39 +4,43 @@
 
 {% block content %}
 <style>
-  #targetUrl,#scanId {
-    background-color: #323840;
-    color: #fff;
-    border: 1px solid #6c757d;
+  form-control, .btn {
     margin-bottom: 1rem;
   }
 
-  .container {
-    height: 75vh;
-  }
-
-
-  .btn-primary {
+  .btn-primary, .btn-info {
     background-color: #495057;
     border-color: #495057;
   }
 
-  /* Add hover effect for the primary button */
-  .btn-primary:hover {
+  .btn-primary:hover, .btn-info:hover {
     background-color: #5e6770;
     border-color: #5e6770;
   }
 
-  /* Style the secondary button */
-  .btn-secondary {
-    background-color: #6c757d;
-    border-color: #6c757d;
+  .container {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    height: 75vh;
   }
 
-  /* Add hover effect for the secondary button */
-  .btn-secondary:hover {
-    background-color: #7a8288;
-    border-color: #7a8288;
+  .form-custom {
+    width: 45%;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+  }
+
+  .result-box {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    padding: 20px;
+    border-radius: 0.25rem;
+    font-family: 'Courier New', Courier, monospace; /* Monospace font for better readability */
+    white-space: pre-wrap; /* Maintains whitespace formatting */
+    overflow-x: auto; /* Adds horizontal scrollbar if needed */
   }
 </style>
 <div class="container">
@@ -45,17 +49,17 @@
     <input type="text" id="targetUrl" class="form-control" placeholder="Enter target URL">
     <button onclick="startSpider()" class="btn btn-primary">Start Spider Scan</button>
     <button onclick="startActiveScan()" class="btn btn-primary">Start Active Scan</button>
-    <button onclick="generateXmlReport()" class="btn btn-primary">Generate Report</button>
-    <pre id="output"></pre>
+    <button onclick="generateXmlReport()" class="btn btn-primary">Generate XML Report</button>
+    <pre id="output" class="result-box"></pre>
   </div>
 
   <!-- Form for checking scan results -->
   <div class="form-custom">
     <input type="text" id="scanId" class="form-control" placeholder="Enter scan Id">
     <button onclick="viewScanStatus()" class="btn btn-info">Check Scan Status</button>
-    <button onclick="viewXmlReport()" class="btn btn-info">View Report</button>
+    <button onclick="viewXmlReport()" class="btn btn-info">View XML Report</button>
     <div id="scanStatusDisplay" class="alert alert-info" role="alert"></div>
-    <pre id="xmlDisplay"></pre>
+    <pre id="xmlDisplay" class="result-box"></pre>
   </div>
 </div>
 
@@ -133,7 +137,7 @@ function viewXmlReport() {
             if (data.error) {
                 alert("Error: " + data.error);
             } else {
-                document.getElementById('xmlDisplay').textContent = data.xml_report;
+                document.getElementById('xmlDisplay').textContent = data.processed_data;
             }
         })
         .catch(error => console.error('Error:', error));
