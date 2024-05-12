@@ -85,8 +85,8 @@ def view_scan_result():
     if not scan_id:
         return jsonify({"error": "Scan ID is required"}), 400
 
-    scan_result = ScanResult.query.filter_by(scan_id=scan_id).first
-    if not scan_result:
+    scan_result = ScanResult.query.filter_by(scan_id=scan_id).first()
+    if scan_result is None:
         return jsonify({"error": "Scan result not found"}), 404
 
     
