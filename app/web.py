@@ -40,7 +40,7 @@ def get_scan_status():
 def generate_xml_report(scan_id):
     data = request.get_json()
     scan_id = data.get('scanId')
-    # Define API details
+    
     
     report_endpoint = f"{ZAP_API_URL}/OTHER/core/other/xmlreport/?apikey={ZAP_API_KEY}&scanId={scan_id}&formMethod=GET"
     
@@ -52,18 +52,24 @@ def generate_xml_report(scan_id):
     except requests.RequestException as e:
         return jsonify({"error": str(e)}), 400
 
-    # Decode XML report, assuming xml_report is in bytes
-    decoded_xml_report = xml_report.decode('utf-8')
+    # Parse the XML report
+    import xml.etree.ElementTree as ET
+    try:
+        root = ET.fromstring(xml_report)
+        # Process the XML data as needed
+        processed_xml = ET.tostring(root, encoding='unicode')
+    except ET.ParseError as e:
+        return jsonify({"error": str(e)}), 400
 
     # Query the database for an existing scan result
     scan_result = ScanResult.query.filter_by(scan_id=scan_id).first()
 
     if scan_result:
         # If a scan result exists, update the xml_report
-        scan_result.xml_report = decoded_xml_report
+        scan_result.xml_report = processed_xml
     else:
         # If no scan result exists, create a new one
-        scan_result = ScanResult(scan_id=scan_id, xml_report=decoded_xml_report)
+        scan_result = ScanResult(scan_id=scan_id, xml_report=processed_xml)
         db.session.add(scan_result)
 
     # Attempt to commit changes to the database
@@ -73,14 +79,3 @@ def generate_xml_report(scan_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
-
-def view_scan_result():
-    scan_id = request.args.get('scanId')
-    if not scan_id:
-        return jsonify({"error": "Scan ID is required"}), 400
-
-    scan_result = ScanResult.query.filter_by(scan_id=scan_id).first()
-    if scan_result and scan_result.xml_report:
-        return jsonify({"scan_id": scan_id, "xml_report": scan_result.xml_report})
-    else:
-        return jsonify({"error": "No results found for the provided scan ID"}), 404
