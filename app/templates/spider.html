@@ -25,13 +25,7 @@
     height: 75vh;
   }
 
-  .form-custom {
-    width: 45%;
-    padding: 20px;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 0.25rem;
-  }
+  
 
   .result-box {
     background-color: #f8f9fa;
@@ -137,7 +131,7 @@ function viewXmlReport() {
             if (data.error) {
                 alert("Error: " + data.error);
             } else {
-                document.getElementById('xmlDisplay').textContent = data.processed_data;
+                document.getElementById('xmlDisplay').textContent = data.xml_report;
             }
         })
         .catch(error => console.error('Error:', error));
