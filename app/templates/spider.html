@@ -43,7 +43,7 @@
     <input type="text" id="targetUrl" class="form-control" placeholder="Enter target URL">
     <button onclick="startSpider()" class="btn btn-primary">Start Spider Scan</button>
     <button onclick="startActiveScan()" class="btn btn-primary">Start Active Scan</button>
-    <button onclick="generateXmlReport()" class="btn btn-primary">Generate XML Report</button>
+    <button onclick="generateXmlReport()" class="btn btn-primary">Generate Report</button>
     <pre id="output" class="result-box"></pre>
   
 
@@ -51,7 +51,7 @@
   
     <input type="text" id="scanId" class="form-control" placeholder="Enter scan Id">
     <button onclick="viewScanStatus()" class="btn btn-info">Check Scan Status</button>
-    <button onclick="viewXmlReport()" class="btn btn-info">View XML Report</button>
+    <button onclick="viewXmlReport()" class="btn btn-info">View Report</button>
     <div id="scanStatusDisplay" class="alert alert-info" role="alert"></div>
     <pre id="xmlDisplay" class="result-box"></pre>
   </div>
@@ -88,17 +88,28 @@
 
   function viewScanStatus() {
     var scanId = document.getElementById('scanId').value;
+    if (!scanId) {
+        alert("Please enter a scan ID.");
+        return;
+    }
     fetch('/get_scan_status', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ scanId: scanId })
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scanId: scanId })
     })
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById('scanStatusDisplay').textContent = 'Scan Status: ' + JSON.stringify(data, null, 2);
-      })
-      .catch(error => console.error('Error:', error));
-  }
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            document.getElementById('scanStatusDisplay').innerHTML = `<div class="alert alert-danger">Error: ${data.error}</div>`;
+        } else {
+            document.getElementById('scanStatusDisplay').innerHTML = `<div class="alert alert-success">Scan Status: ${data.status}</div>`;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('scanStatusDisplay').innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+    });
+}
 
   
 function generateXmlReport() {
