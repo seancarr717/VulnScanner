@@ -4,7 +4,7 @@
 
 {% block content %}
 <style>
-  #targetUrl {
+  #targetUrl,#scanId {
     background-color: #323840;
     color: #fff;
     border: 1px solid #6c757d;
@@ -42,13 +42,13 @@
 <div class="container d-flex justify-content-center align-items-center">
   <div class="row justify-content-center">
     <input type="text" id="targetUrl" class="form-control" placeholder="Enter target URL">
-    <input type="text" id="scanId" class="form-control" placeholder="Enter scan Id">
     <!--buttons to start scans functions-->
     <button onclick="startSpider()" class="btn btn-primary">Start Spider Scan</button>
     <button onclick="startActiveScan()" class="btn btn-secondary">Start Active Scan</button>
-    <button onclick="viewScanStatus()" class="btn btn-info">check scan status</button>
-    <button onclick="generateXmlReport()">Generate XML Report</button>
-    <button onclick="viewXmlReport()">View XML Report</button>
+    <input type="text" id="scanId" class="form-control" placeholder="Enter scan Id">
+    <button onclick="viewScanStatus()" class="btn btn-info">Check scan status</button>
+    <button onclick="generateXmlReport()" class="btn btn-primary">Save Report</button>
+    <button onclick="viewXmlReport()" class="btn btn-secondary">View Report</button>
   </div>
 </div>
 
