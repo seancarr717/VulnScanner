@@ -102,7 +102,7 @@
         if (data.error) {
             document.getElementById('scanStatusDisplay').innerHTML = `<div class="alert alert-danger">Error: ${data.error}</div>`;
         } else {
-            document.getElementById('scanStatusDisplay').innerHTML = `<div class="alert ">Scan Status: ${data.status}%</div>`;
+            document.getElementById('scanStatusDisplay').innerHTML = `<div class="alert alert-dark ">Scan Status: ${data.status}%</div>`;
         }
     })
     .catch(error => {
